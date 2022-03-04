@@ -1,3 +1,5 @@
+#Importing the library
+import tkinter as tk
 import sqlite3
 from lyricsgenius import Genius
 import os
@@ -7,6 +9,16 @@ import urllib.request
 import json
 import urllib
 from youtube_title_parse import get_artist_title
+
+#Create an instance of tkinter window or frame
+win= tk.Tk()
+
+#Setting the geometry of window
+win.geometry("500x765+1030+27")
+text_widget=tk.Text(win, height=100, width=60)
+scrollbar=tk.Scrollbar(win)
+scrollbar.pack(side=tk.LEFT)
+text_widget.pack(side=tk.LEFT)
 
 def refine_title(title):
     start=title.find('(')
@@ -34,23 +46,22 @@ with urllib.request.urlopen(url) as response:
     artist, title=get_artist_title(data['title'])
     artist=refine_title(artist)
     title=refine_title(title)
-    print(artist+" "+title)
+    #print(artist+" "+title)
 
 genius = Genius('b8A_bHSkUWEbjyzE7p2fXEmWqwHLEfp6K5mbijbzzyAhSoP89y3WoSxeJQpr0LEV', remove_section_headers=True)
 song=genius.search_songs(artist+" "+title)
 try:
     url=(song['hits'][0]['result']['path'])
-    print(genius.lyrics(song_url='https://genius.com'+url))
+    tk_print=(genius.lyrics(song_url='https://genius.com'+url))
 
 except:
-    print("No lyrics found")
-    try_again=input()
-    song=genius.search_songs(try_again)
-    url=(song['hits'][0]['result']['path'])
-    print(genius.lyrics(song_url='https://genius.com'+url))
+    tk_print="No lyrics found"
 
-wait=input()
+#Create a Label
+#Label(win, text= tk_print,font=('Helvetica bold', 15)).pack(pady=20)
 
+#Make the window jump above all
+text_widget.insert(tk.END, tk_print)
+win.attributes('-topmost',True)
 
-
-
+tk.mainloop()
